@@ -1,0 +1,11 @@
+.idea
+*.ai
+*.log
+*.pdf
+*.psd
+*.sublime*
+build/
+npm-debug.log*
+Thumbs.db
+.vscode/
+node_modules

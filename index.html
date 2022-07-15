@@ -10,6 +10,7 @@
     <link rel="preload" href="fonts/exo2-regular.woff2" as="font" crossorigin="anonymous">
     <link rel="preload" href="fonts/exo2-semibold.woff2" as="font" crossorigin="anonymous">
     <link rel="preload" href="fonts/exo2-bold.woff2" as="font" crossorigin="anonymous">
+    <link rel="stylesheet" href="leaflet/leaflet.css">
     <link rel="stylesheet" href="css/style.min.css">
 </head>
 
@@ -134,7 +135,7 @@
                             <svg width="20" height="20" aria-hidden="true">
                                 <use xlink:href="#icon-kekscoin"></use>
                             </svg>
-                            <span id="user-crypto-balance">
+                            <span class="user-crypto-balance" id="user-crypto-balance">
                                 <!-- Вставьте сюда количество криптомонет пользователя -->
                             </span>
                             <span class="visually-hidden">кекскоин</span>
@@ -143,7 +144,7 @@
                             <svg width="20" height="20" aria-hidden="true">
                                 <use xlink:href="#icon-rub"></use>
                             </svg>
-                            <span id="user-fiat-balance">
+                            <span class="user-fiat-balance" id="user-fiat-balance">
                                 <!-- Вставьте сюда количество денег у пользователя  -->
                             </span>
                             <span class="visually-hidden">рубль</span>
@@ -153,7 +154,7 @@
                         <svg width="20" height="20" aria-hidden="true">
                             <use xlink:href="#icon-user"></use>
                         </svg>
-                        <span>
+                        <span class="nick-name">
                             <!-- Вставьте сюда имя пользователя -->
                         </span>
                     </span>
@@ -169,7 +170,7 @@
                 Для удобства обращения из JS, вы можете добавить контейнерам id
                 или уникальные классы
             -->
-            <div class="container" style="display: none">
+            <div class="container" id="error-load" style="display: none">
                 <div class="message">
                     <span class="message__icon">
                         <svg width="60" height="60" aria-hidden="true">
@@ -183,22 +184,22 @@
                 </div>
             </div>
 
-            <div class="container">
-                <div class="users-nav">
+            <div class="container main-toggle__container">
+                <div class="custom-toggle">
                     <div class="users-nav__tabs">
                         <div class="tabs no-transition-global tabs--toggle-buy-sell" data-tabs="parent"
                             data-delay="300">
                             <div class="tabs__controls" data-tabs="controls">
                                 <!-- При переключении с продавцов на покупателей и обратно нужно выделить активный пункт .is-active -->
-                                <button class="tabs__control btn is-active" type="button"
+                                <button class="tabs__control btn is-active buy-button" type="button"
                                     data-tabs="control">Купить</button>
-                                <button class="tabs__control btn" type="button" data-tabs="control">Продать</button>
+                                <button class="tabs__control btn sell-button" type="button" data-tabs="control">Продать</button>
                             </div>
                         </div>
                     </div>
                     <div class="custom-toggle users-nav__custom-toggle">
-                        <label>
-                            <input type="checkbox" id="checked-users" name="checkbox">
+                        <label for="checked-users">
+                            <input type="checkbox" class="custom-toggle__input" id="checked-users" name="checkbox">
                             <span class="custom-toggle__icon"></span>
                             <span class="custom-toggle__label">Только проверенные пользователи</span>
                         </label>
@@ -208,9 +209,9 @@
                             data-delay="300">
                             <!-- При переключении с карты на список и обратно нужно выделить активный пункт .is-active -->
                             <div class="tabs__controls" data-tabs="controls">
-                                <button class="tabs__control btn is-active" type="button"
+                                <button class="tabs__control btn is-active list-button" type="button"
                                     data-tabs="control">Cписок</button>
-                                <button class="tabs__control btn" type="button" data-tabs="control">Карта</button>
+                                <button class="tabs__control btn map-button" type="button" data-tabs="control">Карта</button>
                             </div>
                         </div>
                     </div>
@@ -252,8 +253,8 @@
             </div>
 
             <!-- При переключении на карту нужно отобразить данный контейнер -->
-            <div class="container" style="display: none">
-                <div class="map">
+            <div class="container map-container" style="display: none">
+                <div class="map" id="map-canvas">
                     <!--
                         Карту нужно отрисовать в этот контейнер. Иконки для карты -
                         img/pin.svg и img/pin-verified.svg для обычных пользователей
@@ -298,7 +299,7 @@
             <div class="modal__content">
                 <h2 class="modal__description">Покупка криптовалюты</h2>
                 <!-- Не забудьте указать верный action-атрибут -->
-                <form class="modal-buy" method="post">
+                <form class="modal-buy" action="https://cryptostar.grading.pages.academy/" method="post" enctype="multipart/form-data" autocomplete="off">
                     <!-- 
                         Обратите внимание, что всем полям для отправки на сервер нужно указать
                         атрибуты name (их список вы найдёте в техзадании), а часть полей
@@ -426,7 +427,7 @@
             <div class="modal__content">
                 <h2 class="modal__description">Продажа криптовалюты</h2>
                 <!-- Не забудьте указать верный action-атрибут -->
-                <form class="modal-sell" method="post">
+                <form class="modal-sell" action="https://cryptostar.grading.pages.academy/" method="post" enctype="multipart/form-data" autocomplete="off">
                     <!-- 
                         Обратите внимание, что всем полям для отправки на сервер нужно указать
                         атрибуты name (их список вы найдёте в техзадании), а часть полей
@@ -558,10 +559,10 @@
         <tr class="users-list__table-row">
             <td class="users-list__table-cell users-list__table-name">
                 <!-- Обратите внимание, что "звёздочка только" у верифицированных пользователей -->
-                <svg width="20" height="20" aria-hidden="true">
+                <svg width="20" height="20" aria-hidden="true" class="gold-star" style="display: none;">
                     <use xlink:href="#icon-star"></use>
                 </svg>
-                <span>John Smith</span>
+                <span class="contractor-name">John Smith</span>
             </td>
             <td class="users-list__table-cell users-list__table-currency">keks</td>
             <td class="users-list__table-cell users-list__table-exchangerate">9 999 999&nbsp;₽</td>
@@ -569,9 +570,9 @@
                 999&nbsp;₽&nbsp;-&nbsp;9 999 999 000&nbsp;₽</td>
             <td class="users-list__table-cell users-list__table-payments">
                 <ul class="users-list__badges-list">
-                    <li class="users-list__badges-item badge">BitTransfer</li>
-                    <li class="users-list__badges-item badge">CryptoEx</li>
-                    <li class="users-list__badges-item badge">Первый криптобанк</li>
+                    <li class="users-list__badges-item badge first">BitTransfer</li>
+                    <li class="users-list__badges-item badge second">CryptoEx</li>
+                    <li class="users-list__badges-item badge third">Первый криптобанк</li>
                 </ul>
             </td>
             <td class="users-list__table-cell users-list__table-btn">
@@ -610,7 +611,9 @@
             </button>
         </div>
     </template>
-
+    
+    <script src="./leaflet/leaflet.js"></script>
+    <script src="./pristine/pristine.min.js"></script>
     <script src="./js/main.js" type="module"></script>
 
 </body>
