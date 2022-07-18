@@ -3,6 +3,8 @@ const createUserTableRow = (contractor) => {
   .content
   .querySelector('.users-list__table-row').cloneNode(true);
 
+  const exchangeBtn  = templateUserTableRow.querySelector('.btn--greenborder');
+
   const checkedUser = templateUserTableRow.querySelector('.gold-star');
   if(contractor.isVerified) {
     checkedUser.style.display = 'inline';
@@ -32,11 +34,13 @@ const createUserTableRow = (contractor) => {
   const badge_2 = templateUserTableRow.querySelector('.second');
   const badge_3 = templateUserTableRow.querySelector('.third');
 
-  if(contractor.status === "buyer") {
+  if(contractor.status === 'buyer') {
     usersListBadgesList.style.display = 'none';
-    templateUserTableRow.classList.add('seller');
-  } else if (contractor.status === "seller") {
     templateUserTableRow.classList.add('buyer');
+    exchangeBtn.classList.add('buyer-btn');
+  } else if (contractor.status === 'seller') {
+    templateUserTableRow.classList.add('seller');
+    exchangeBtn.classList.add('seller-btn');
     let payMethods = Object.assign({}, contractor.paymentMethods);
     let {...rest} = payMethods;
 
@@ -51,7 +55,9 @@ const createUserTableRow = (contractor) => {
     rest[2] === undefined ? badge_3.style.display = 'none': badge_3.textContent = rest[2].provider;
   
     delete(rest[2]);
+
   }
+
 
   return templateUserTableRow;
 }

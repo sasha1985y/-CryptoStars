@@ -1,11 +1,11 @@
-import {sendRequest, sendUserRequest} from './fetch.js';
+import {sendRequest, sendUserRequest, sendMapRequest} from './fetch.js';
 import {onUserSuccess, onError, onSuccess} from './user-interface.js';
-import {createUserTableRow} from './user-table.js';
+import {createMapPopup} from './map-popup.js';
 
 const INITIAL_LAT = 59.92749;
 const INITIAL_LNG = 30.31127;
 
-const initialCoordinates = {lat: INITIAL_LAT, lng: INITIAL_LNG};
+let cashContractors = [];
 
 const Map = {
   TILE: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -15,13 +15,6 @@ const Map = {
 
 const map = L.map('map-canvas');
 
-L.tileLayer(
-  Map.TILE,
-  {
-    attribution: Map.COPYRIGHT,
-  },
-).addTo(map);
-
 const markerGroup = L.layerGroup().addTo(map);
 
 const addPinIcon = L.icon({
@@ -30,19 +23,26 @@ const addPinIcon = L.icon({
   iconAnchor: [20, 40]
 });
 
-const addPinIconVerified = L.icon({
-  iconUrl: './img/pin-verified.svg',
-  iconSize: [40, 40],
-  iconAnchor: [20, 40]
-});
+const onMapSuccess = (data) => {
+  cashContractors = data.slice();
+  let cashAbleUsers = [];
+  let cashAbleUser;
+  cashContractors.forEach(element => {
+    if(element.coords) {
+      cashAbleUser = Object.assign({}, element);
+      cashAbleUsers.push(cashAbleUser);
+    }
+  });
+  renderPins(cashAbleUsers.slice());
+};
 
-const similarContractor = (contractor) => {
+const similarContractor = (cashContractor) => {
   const {
     coords:{
       lat,
       lng
-    }
-  } = contractor;
+    },
+  } = cashContractor;
   const adPins = L.marker({
     lat,
     lng, 
@@ -51,10 +51,10 @@ const similarContractor = (contractor) => {
     draggable: false,
     icon: addPinIcon,
   });
-
+  
   adPins
   .addTo(markerGroup)
-  .bindPopup(createUserTableRow(contractor));
+  .bindPopup(createMapPopup(cashContractor));
   
 };
 
@@ -64,9 +64,9 @@ const renderPins = (pins) => {
   })
 };
 
-
 map.on('load', () => {
   sendRequest(onSuccess, onError, 'GET');
+  sendMapRequest(onMapSuccess, onError, 'GET');
   sendUserRequest(onUserSuccess, onError, 'GET');
 })
 
@@ -74,3 +74,10 @@ map.on('load', () => {
   lat: INITIAL_LAT,
   lng: INITIAL_LNG,
 }, Map.ZOOM);
+
+L.tileLayer(
+  Map.TILE,
+  {
+    attribution: Map.COPYRIGHT,
+  },
+).addTo(map);
