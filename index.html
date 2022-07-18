@@ -312,17 +312,23 @@
                     <input type="hidden" name="receivingCurrency">
 
                     <div class="transaction-info">
-                        <p class="transaction-info__item transaction-info__item--name"><span
-                                class="transaction-info__label">Пользователь</span><span class="transaction-info__data">
-                                <svg width="20" height="20" aria-hidden="true">
+                        <p class="transaction-info__item transaction-info__item--name">
+                            <span class="transaction-info__label">Пользователь</span>
+                            <span class="transaction-info__data">
+                                <svg width="20" height="20" aria-hidden="true" class="gold-star">
                                     <use xlink:href="#icon-star"></use>
-                                </svg>John Smith</span></p>
-                        <p class="transaction-info__item transaction-info__item--exchangerate"><span
-                                class="transaction-info__label">Курс</span><span class="transaction-info__data">9 999
-                                999&nbsp;₽</span></p>
-                        <p class="transaction-info__item transaction-info__item--cashlimit"><span
-                                class="transaction-info__label">Лимит</span><span class="transaction-info__data">9 999
-                                999&nbsp;₽&nbsp;-&nbsp;9 999 999 000&nbsp;₽</span></p>
+                                </svg>
+                                <span class="contractor-name">Seller</span>
+                            </span>
+                        </p>
+                        <p class="transaction-info__item transaction-info__item--exchangerate">
+                            <span class="transaction-info__label">Курс</span>
+                            <span class="transaction-info__data exchange-rate">9 999999&nbsp;₽</span>
+                        </p>
+                        <p class="transaction-info__item transaction-info__item--cashlimit">
+                            <span class="transaction-info__label">Лимит</span>
+                            <span class="transaction-info__data limit">9 999999&nbsp;₽&nbsp;-&nbsp;9 999 999 000&nbsp;₽</span>
+                        </p>
                     </div>
                     <div class="modal__container modal__container--small">
                         <div class="modal__input-wrapper modal__input-wrapper--min">
@@ -357,12 +363,12 @@
                                     которые есть у пользователя. Способ - удалить из разметки или добавить disable-атрибут
                                     остаётся на ваше усмотрение. Первый пункт, с предложением выбора, должен быть всегда
                                 -->
-                                <select>
-                                    <option selected disabled>Выберите платёжную систему</option>
-                                    <option>CryptoEx</option>
-                                    <option>Первый криптобанк</option>
-                                    <option>BitTransfer</option>
-                                    <option>BMT Exchange</option>
+                                <select class="seller-options">
+                                    <option class="choose" selected disabled>Выберите платёжную систему</option>
+                                    <option class="seller-option first-option">CryptoEx</option>
+                                    <option class="seller-option second-option">Первый криптобанк</option>
+                                    <option class="seller-option third-option">BitTransfer</option>
+                                    <!--option class="first-option">BMT Exchange</option-->
                                 </select>
                             </div>
                         </div>
@@ -370,7 +376,7 @@
                             <div class="custom-input">
                                 <!-- В случае, если выбрана оплата наличными, поле нужно оставить пустым -->
                                 <label><span class="custom-input__label">Номер банковской карты пользователя</span>
-                                    <input type="number" placeholder="1234 5678 9012 3456" disabled>
+                                    <input type="number" class="card-number" placeholder="1234 5678 9012 3456" disabled>
                                 </label>
                             </div>
                         </div>
@@ -443,19 +449,19 @@
                         <p class="transaction-info__item transaction-info__item--name">
                             <span class="transaction-info__label">Пользователь</span>
                             <span class="transaction-info__data">
-                                <svg width="20" height="20" aria-hidden="true">
+                                <svg width="20" height="20" aria-hidden="true" class="gold-star">
                                     <use xlink:href="#icon-star"></use>
                                 </svg>
-                                John Smith
+                                <span class="contractor-name">Buyer</span>
                             </span>
                         </p>
                         <p class="transaction-info__item transaction-info__item--exchangerate">
                             <span class="transaction-info__label">Курс</span>
-                            <span class="transaction-info__data">9 999 999&nbsp;₽</span>
+                            <span class="transaction-info__data exchange-rate">9 999 999&nbsp;₽</span>
                         </p>
                         <p class="transaction-info__item transaction-info__item--cashlimit">
                             <span class="transaction-info__label">Лимит</span>
-                            <span class="transaction-info__data">9 999 999&nbsp;₽&nbsp;-&nbsp;9 999 999
+                            <span class="transaction-info__data limit">9 999 999&nbsp;₽&nbsp;-&nbsp;9 999 999
                                 000&nbsp;₽</span>
                         </p>
                     </div>
@@ -501,12 +507,12 @@
                                     которые есть у пользователя. Способ - удалить из разметки или добавить disable-атрибут
                                     остаётся на ваше усмотрение. Первый пункт, с предложением выбора, должен быть всегда
                                 -->
-                                <select>
+                                <select class="buyer-options">
                                     <option selected disabled>Выберите платёжную систему</option>
-                                    <option>CryptoEx</option>
-                                    <option>Первый криптобанк</option>
-                                    <option>BitTransfer</option>
-                                    <option>BMT Exchange</option>
+                                    <option class="first-option">CryptoEx</option>
+                                    <option class="second-option">Первый криптобанк</option>
+                                    <option class="third-option">BitTransfer</option>
+                                    <!--option>BMT Exchange</option-->
                                 </select>
                             </div>
                         </div>
@@ -591,21 +597,21 @@
         <div class="user-card">
             <span class="user-card__user-name">
                 <!-- Обратите внимание, что "звёздочка только" у верифицированных пользователей -->
-                <svg width="20" height="20" aria-hidden="true">
+                <svg width="20" height="20" aria-hidden="true" class="gold-star">
                     <use xlink:href="#icon-star"></use>
                 </svg>
-                <span>Неопознанный енот</span>
+                <span class="contractor-name">Неопознанный енот</span>
             </span>
             <p class="user-card__cash-item"><span class="user-card__cash-label">Валюта</span><span
-                    class="user-card__cash-data">KEKS</span></p>
+                    class="user-card__cash-data balance-currency">KEKS</span></p>
             <p class="user-card__cash-item"><span class="user-card__cash-label">Курс</span><span
-                    class="user-card__cash-data">9 999 999 ₽</span></p>
-            <p class="user-card__cash-item"><span class="user-card__cash-label">Лимит</span><span
+                    class="user-card__cash-data exchange-rate">9 999 999 ₽</span></p>
+            <p class="user-card__cash-item limit"><span class="user-card__cash-label">Лимит</span><span
                     class="user-card__cash-data">9 900 ₽ – 9 900 000 000 ₽</span></p>
             <ul class="user-card__badges-list">
-                <li class="user-card__badges-item badge">BitTransfer</li>
-                <li class="user-card__badges-item badge">CryptoEx</li>
-                <li class="user-card__badges-item badge">Первый криптобанк</li>
+                <li class="user-card__badges-item badge first-card">BitTransfer</li>
+                <li class="user-card__badges-item badge second-card">CryptoEx</li>
+                <li class="user-card__badges-item badge third-card">Первый криптобанк</li>
             </ul>
             <button class="btn btn--green user-card__change-btn" type="button">Обменять
             </button>

@@ -1,5 +1,5 @@
-//import {sendRequest, sendUserRequest} from './fetch.js';
 import {createUserTableRow} from './user-table.js';
+import {isEscapeKey} from'./map-popup.js';
 
 /* user profile*/
 
@@ -16,7 +16,6 @@ const userNickName = userProfileName.querySelector('.nick-name');
 
 const onUserSuccess = (data) => {
   testUser = Object.assign({}, data);
-  console.log(testUser);
 
   let {userName, balances} = testUser;
 
@@ -56,14 +55,164 @@ const usersListTableBody = usersList.querySelector('.users-list__table-body');
 
 const onSuccess = (data) => {
   contractors = data.slice();
-  contractors.forEach(contractor => {
+  
+  let onlyBuyers = contractors.filter(onlyBuyer => onlyBuyer.status === 'buyer');
+  
+  let onlySellers = contractors.filter(onlySeller => onlySeller.status === 'seller');
+
+  
+  contractors.forEach((contractor) => {
     contractor = createUserTableRow(contractor);
     usersListTableBody.appendChild(contractor);
   });
-  console.log(contractors);
+  
+  const buyerBtns = usersListTableBody.querySelectorAll('.buyer-btn')
+
+  for (let i = 0; i < onlyBuyers.length; i++) {
+    const onlyBuyer = onlyBuyers[i];
+    for (let j = 0; j < buyerBtns.length; j++) {
+      const onlyBuyerBtn = buyerBtns[j];
+      if(i === j) {
+        getBuyerBtn(onlyBuyerBtn, onlyBuyer);
+      }
+    }
+  }
+  
+  const sellerBtns = usersListTableBody.querySelectorAll('.seller-btn')
+
+  for (let i = 0; i < onlySellers.length; i++) {
+    const onlySeller = onlySellers[i];
+    for (let j = 0; j < sellerBtns.length; j++) {
+      const onlySellerBtn = sellerBtns[j];
+      if(i === j) {
+        getSellerBtn(onlySellerBtn, onlySeller);
+      }
+    }
+  }
   
 };
 
+
+
+const popupModalBuy = document.querySelector('.modal--buy');
+const popupModalSell = document.querySelector('.modal--sell');
+
+const getBuyerBtn = (onlyBuyerBtn, onlyBuyer) => {
+  clickBuyerBtns(onlyBuyerBtn, onlyBuyer);
+};
+
+/* click buyer button => window modal sell */
+
+const clickBuyerBtns = (onlyBuyerBtn, onlyBuyer) => {
+  onlyBuyerBtn.addEventListener('click', () => {
+
+    popupModalSell.style.display = 'flex';  
+    
+    if(popupModalSell.style.display === 'flex') {
+      const popupModalSellOpened = (popupModalSell.style.display === 'flex');
+      popupModalSellStatus(popupModalSellOpened);
+    } else if (popupModalSell.style.display === 'none'){
+      const popupModalSellClosed = (popupModalSell.style.display === 'none');
+      popupModalSellStatus(popupModalSellClosed);
+    }
+
+    const buyerStatus = popupModalSell.querySelector('.gold-star');
+    (!onlyBuyer.isVerified)? buyerStatus.classList.add('visually-hidden'): buyerStatus.classList.remove('visually-hidden');
+
+    const buyerName = popupModalSell.querySelector('.contractor-name');
+    buyerName.textContent = onlyBuyer.userName;
+
+    const buyerInfoData = popupModalSell.querySelector('.exchange-rate');
+    buyerInfoData.textContent = `${onlyBuyer.exchangeRate} ₽`;
+    
+    const buyerCurrencyLimit = popupModalSell.querySelector('.limit');
+    buyerCurrencyLimit.textContent = `${onlyBuyer.minAmount} ₽ - ${onlyBuyer.balance.amount} ₽ `;
+
+  })
+};
+
+const popupModalSellStatus = (popupModalSellOpened, popupModalSellClosed) => {
+  getEscapeCleaner(popupModalSellOpened, popupModalSellClosed);
+}
+
+const getSellerBtn = (onlySellerBtn, onlySeller) => {
+  clickSellerBtns(onlySellerBtn, onlySeller);
+};
+
+/* click seller button => window modal buy */
+
+const clickSellerBtns = (onlySellerBtn, onlySeller) => {
+  
+  onlySellerBtn.addEventListener('click', () => {
+    
+    popupModalBuy.style.display = 'flex';
+
+    if(popupModalBuy.style.display === 'flex') {
+      const popupModalBuyOpened = (popupModalBuy.style.display === 'flex');
+      popupModalBuyStatus(popupModalBuyOpened);
+    } else if (popupModalBuy.style.display === 'none'){
+      const popupModalBuyClosed = (popupModalBuy.style.display === 'none');
+      popupModalBuyStatus(popupModalBuyClosed);
+    }
+  
+    const sellerStatus = popupModalBuy.querySelector('.gold-star');
+    (!onlySeller.isVerified)? sellerStatus.classList.add('visually-hidden'): sellerStatus.classList.remove('visually-hidden');
+
+    const sellerName = popupModalBuy.querySelector('.contractor-name');
+    sellerName.textContent = onlySeller.userName;
+    
+    const sellerInfoData = popupModalBuy.querySelector('.exchange-rate');
+    sellerInfoData.textContent = `${onlySeller.exchangeRate} ₽`;
+    
+    const sellerCurrencyLimit = popupModalBuy.querySelector('.limit');
+    sellerCurrencyLimit.textContent = `${onlySeller.minAmount} K - ${onlySeller.balance.amount} K `;
+    
+    const sellerSelectorOptions = popupModalBuy.querySelector('.seller-options');
+    const sellerOptions = sellerSelectorOptions.querySelectorAll('.seller-option');
+    const sellerOption_1 = popupModalBuy.querySelector('.first-option');
+    const sellerOption_2 = popupModalBuy.querySelector('.second-option');
+    const sellerOption_3 = popupModalBuy.querySelector('.third-option');
+    
+    const sellerCardNumber = popupModalBuy.querySelector('.card-number');
+    
+    const sellerCashMethods = Object.assign({}, onlySeller.paymentMethods);
+    const {...rest} = sellerCashMethods;
+
+    
+
+    
+    sellerOption_1.textContent = rest[0].provider;
+    
+    rest[1] === undefined ? sellerOption_2.style.display = 'none': sellerOption_2.textContent = rest[1].provider, rest[1] === undefined ? sellerOption_2.style.display = 'none': sellerOption_2.style.display = 'inline';
+    
+    rest[2] === undefined ? sellerOption_3.style.display = 'none': sellerOption_3.textContent = rest[2].provider, rest[2] === undefined ? sellerOption_3.style.display = 'none': sellerOption_3.style.display = 'inline';
+    
+    
+    
+    
+  })
+};
+
+const popupModalBuyStatus = (popupModalBuyOpened) => {
+  getEscapeCleaner(popupModalBuyOpened);
+}
+
+/* Esc cleaner*/
+
+const getEscapeCleaner = (popupModalBuyOpened, popupModalSellOpened) => {
+  
+  if (popupModalBuyOpened || popupModalSellOpened) {
+    document.addEventListener('keydown', (evt) => {
+      if(isEscapeKey(evt)) {
+        evt.preventDefault();
+        popupModalBuy.style.display = 'none';
+        popupModalSell.style.display = 'none';
+      }
+    });
+  }  
+};
+
+getEscapeCleaner();
 
 const buyBtn = mainToggleContainer.querySelector('.buy-button');
 const sellBtn = mainToggleContainer.querySelector('.sell-button');
@@ -101,17 +250,17 @@ const getFreeBuyer = () => {
 /* custom checkbox */
 
 const customToggleInput = mainToggleContainer.querySelector('.custom-toggle__input');
-const customToggleIcon = mainToggleContainer.querySelector('.custom-toggle__icon');
+const customToggle = mainToggleContainer.querySelector('.custom-toggle__input');
 
 customToggleInput.addEventListener('change', () => {
-  if(sellBtn.classList.contains('is-active')) {
+  if(buyBtn.classList.contains('is-active')) {
     getVipBuyer().forEach(element => {
       element.style.display = 'flex';
     });
     getFreeBuyer().forEach(element => {
       element.style.display = 'none';
     });
-  } else if (buyBtn.classList.contains('is-active')) {
+  } else if (sellBtn.classList.contains('is-active')) {
     getVipSeller().forEach(element => {
       element.style.display = 'flex';
     });
@@ -125,24 +274,24 @@ customToggleInput.addEventListener('change', () => {
 
 buyBtn.addEventListener('click', () => {
   getBuyer().forEach(element => {
-    element.style.display = 'flex';
+    element.style.display = 'none';
   });
   buyBtn.classList.add('is-active');
   sellBtn.classList.remove('is-active');
   getSeller().forEach(element => {
-    element.style.display = 'none';
+    element.style.display = 'flex';
   });
 });
 
 
 sellBtn.addEventListener('click', () => {
   getSeller().forEach(element => {
-    element.style.display = 'flex';
+    element.style.display = 'none';
   });
   sellBtn.classList.add('is-active');
   buyBtn.classList.remove('is-active');
   getBuyer().forEach(element => {
-    element.style.display = 'none';
+    element.style.display = 'flex';
   });
 });
 
@@ -159,7 +308,7 @@ const onError = (error) => {
   mapBtn.style.display = 'none';
   listBtn.style.display = 'none';
   customToggle.style.display = 'none';
-
 };
+
 
 export {userProfile, onUserSuccess, onSuccess, onError, errorBlock};

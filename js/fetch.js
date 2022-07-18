@@ -19,6 +19,22 @@ const sendRequest = (onSuccess, onError, method, body) => {
   });
 };
 
+const sendMapRequest = (onMapSuccess, onError, method, body) => {
+  fetch(
+    Urls[method],
+    {
+      method: method,
+      body,
+    },
+  ).then((response) => response.json())
+  .then((data) => {
+    onMapSuccess(data)
+  })  
+  .catch((error) => {
+    onError(error);
+  });
+};
+
 const Url = {
   GET: 'https://cryptostar.grading.pages.academy/user'
 }
@@ -39,4 +55,5 @@ const sendUserRequest = (onUserSuccess, onError, method, body) => {
   });
 };
 
-export {sendRequest, sendUserRequest};
+
+export {sendRequest, sendUserRequest, sendMapRequest};
