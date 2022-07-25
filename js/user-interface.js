@@ -78,7 +78,7 @@ const onSuccess = (data) => {
     }
   }
   
-  const sellerBtns = usersListTableBody.querySelectorAll('.seller-btn')
+  const sellerBtns = usersListTableBody.querySelectorAll('.seller-btn');
 
   for (let i = 0; i < onlySellers.length; i++) {
     const onlySeller = onlySellers[i];
@@ -90,9 +90,9 @@ const onSuccess = (data) => {
     }
   }
   
+  console.log(contractors);
+
 };
-
-
 
 const popupModalBuy = document.querySelector('.modal--buy');
 const popupModalSell = document.querySelector('.modal--sell');
@@ -127,12 +127,13 @@ const clickBuyerBtns = (onlyBuyerBtn, onlyBuyer) => {
     
     const buyerCurrencyLimit = popupModalSell.querySelector('.limit');
     buyerCurrencyLimit.textContent = `${onlyBuyer.minAmount} ₽ - ${onlyBuyer.balance.amount} ₽ `;
-
+    
   })
 };
 
 const popupModalSellStatus = (popupModalSellOpened, popupModalSellClosed) => {
-  getEscapeCleaner(popupModalSellOpened, popupModalSellClosed);
+  addEscapeListener(popupModalSellOpened);
+  removeEscapeListener(popupModalSellClosed);
 }
 
 const getSellerBtn = (onlySellerBtn, onlySeller) => {
@@ -141,9 +142,20 @@ const getSellerBtn = (onlySellerBtn, onlySeller) => {
 
 /* click seller button => window modal buy */
 
+const sellerSelectorOptions = popupModalBuy.querySelector('.seller-options');
+const sellerOptions = sellerSelectorOptions.querySelectorAll('.seller-option');
+const sellerCardNumber = popupModalBuy.querySelector('.card-number');
+
 const clickSellerBtns = (onlySellerBtn, onlySeller) => {
   
+  
   onlySellerBtn.addEventListener('click', () => {
+    
+    const getRestSellerCashMethods = () => {
+      const sellerCashMethods = Object.assign({}, onlySeller.paymentMethods);
+      const {...rest} = sellerCashMethods;
+      return rest;
+    };
     
     popupModalBuy.style.display = 'flex';
 
@@ -165,54 +177,144 @@ const clickSellerBtns = (onlySellerBtn, onlySeller) => {
     sellerInfoData.textContent = `${onlySeller.exchangeRate} ₽`;
     
     const sellerCurrencyLimit = popupModalBuy.querySelector('.limit');
-    sellerCurrencyLimit.textContent = `${onlySeller.minAmount} K - ${onlySeller.balance.amount} K `;
+    sellerCurrencyLimit.textContent = `${onlySeller.minAmount} ${String.fromCodePoint(11088)} - ${onlySeller.balance.amount} ${String.fromCodePoint(11088)} `;
     
-    const sellerSelectorOptions = popupModalBuy.querySelector('.seller-options');
-    const sellerOptions = sellerSelectorOptions.querySelectorAll('.seller-option');
-    const sellerOption_1 = popupModalBuy.querySelector('.first-option');
-    const sellerOption_2 = popupModalBuy.querySelector('.second-option');
-    const sellerOption_3 = popupModalBuy.querySelector('.third-option');
     
-    const sellerCardNumber = popupModalBuy.querySelector('.card-number');
-    
-    const sellerCashMethods = Object.assign({}, onlySeller.paymentMethods);
-    const {...rest} = sellerCashMethods;
-
     
 
+    const getRestOption = () => {
+
+      let sellerProviders = [];
+      
+      for (let prop in getRestSellerCashMethods()) {
+        const provider = getRestSellerCashMethods()[prop].provider;
+        sellerProviders.push(provider);
+      }
+      return sellerProviders;
+    };
     
-    sellerOption_1.textContent = rest[0].provider;
-    
-    rest[1] === undefined ? sellerOption_2.style.display = 'none': sellerOption_2.textContent = rest[1].provider, rest[1] === undefined ? sellerOption_2.style.display = 'none': sellerOption_2.style.display = 'inline';
-    
-    rest[2] === undefined ? sellerOption_3.style.display = 'none': sellerOption_3.textContent = rest[2].provider, rest[2] === undefined ? sellerOption_3.style.display = 'none': sellerOption_3.style.display = 'inline';
     
     
     
+    
+    const setRestPropProvider = () => {
+      let count = 0;
+      for (let i = 0; i < getRestOption().length; i++) {
+        const provider = getRestOption()[i];
+        for (let j = 0; j < sellerOptions.length; j++) {
+          let sellerSelectorOption = sellerOptions[j];
+          
+          
+          if (i === j) {
+            sellerSelectorOption.textContent = provider;
+            
+            count++;
+
+            if (sellerOptions.length - 1 > count && sellerOptions[count]) {
+              let uselessOptions = (sellerOptions.length - 1) - count;
+              for (let k = sellerOptions[count + 1]; k < uselessOptions.length; k++) {
+                let element = uselessOptions[k];
+                element.classList.add('visually-hidden');
+              }
+            }
+          }
+        }
+      } 
+    };
+    
+    setRestPropProvider();
+
+    const getCardsData = () => {
+      let cardsData = [];
+      for (let card in getRestSellerCashMethods()) {
+        const sellerCard = getRestSellerCashMethods()[card].accountNumber;
+        cardsData.push(sellerCard);
+        console.log(cardsData);
+        return cardsData;
+      }
+    }
+  
+    sellerSelectorOptions.addEventListener('mousedown', () => {
+
+      sellerSelectorOptions.value = 'Выберите платёжную систему';
+      sellerCardNumber.placeholder = 'Выберите платёжную систему';
+      
+    })
+    
+    const changeSelectorOption = () => {
+      sellerSelectorOptions.addEventListener('change', () => {
+        for (let i = 0; i < sellerOptions.length; i++) {
+          const sellerOption = sellerOptions[i];
+
+          for (let j = 0; j < getCardsData().length; j++) {
+            const card = getCardsData()[j];
+
+            if (i === j) sellerCardNumber.placeholder = card;
+            if (card === undefined || sellerOption.textContent === 'Cash in person') sellerCardNumber.placeholder = '0000 0000 0000 0000';
+            return console.log(card);
+          }
+        }
+      })
+    }
+
+    changeSelectorOption();
     
   })
+
 };
 
-const popupModalBuyStatus = (popupModalBuyOpened) => {
-  getEscapeCleaner(popupModalBuyOpened);
-}
+
+
+
+const popupModalBuyStatus = (popupModalBuyOpened, popupModalBuyClosed) => {
+  addEscapeListener(popupModalBuyOpened);
+  removeEscapeListener(popupModalBuyClosed);
+};
 
 /* Esc cleaner*/
 
-const getEscapeCleaner = (popupModalBuyOpened, popupModalSellOpened) => {
-  
-  if (popupModalBuyOpened || popupModalSellOpened) {
-    document.addEventListener('keydown', (evt) => {
-      if(isEscapeKey(evt)) {
-        evt.preventDefault();
-        popupModalBuy.style.display = 'none';
-        popupModalSell.style.display = 'none';
-      }
+function closeModalPopup (evt) {
+  if(isEscapeKey(evt)) {
+    evt.preventDefault();
+    popupModalBuy.style.display = 'none';
+    popupModalSell.style.display = 'none';
+    sellerOptions.forEach(element => {
+      if(element.classList.contains('visually-hidden')) element.classList.remove('visually-hidden');
+      element.textContent = ''
     });
+  }
+}
+
+const addEscapeListener = (popupModalBuyOpened, popupModalSellOpened) => {
+  if (popupModalBuyOpened || popupModalSellOpened) {
+    document.addEventListener('keydown', closeModalPopup ,false);
   }  
 };
 
-getEscapeCleaner();
+const removeEscapeListener = (popupModalBuyClosed, popupModalSellClosed) => {
+  if (popupModalBuyClosed || popupModalSellClosed) {
+    document.removeEventListener('keydown', closeModalPopup, false);
+  }  
+};
+
+addEscapeListener();
+removeEscapeListener();
+
+/* popup close button [x] this listener helps to remove handler addEscapeListener */
+
+const modalCloseBtns = document.querySelectorAll('.modal__close-btn');
+modalCloseBtns.forEach(element => {
+  element.addEventListener('click', () => {
+    popupModalBuy.style.display = 'none';
+    popupModalSell.style.display = 'none';
+    sellerOptions.forEach(element => {
+      if(element.classList.contains('visually-hidden')) element.classList.remove('visually-hidden');
+      element.textContent = ''
+    });
+    document.removeEventListener('keydown', closeModalPopup, false);
+  })
+});
+
 
 const buyBtn = mainToggleContainer.querySelector('.buy-button');
 const sellBtn = mainToggleContainer.querySelector('.sell-button');
