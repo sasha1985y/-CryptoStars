@@ -26,7 +26,7 @@ const createUserTableRow = (contractor) => {
   if(contractor.status === "buyer") {
     usersListTableCashlimit.textContent = `${contractor.minAmount} ₽ - ${contractor.balance.amount} ₽`;
   } else {
-    usersListTableCashlimit.textContent = `${contractor.minAmount} K - ${contractor.balance.amount} K `;
+    usersListTableCashlimit.textContent = `${contractor.minAmount} ${String.fromCodePoint(11088)} - ${contractor.balance.amount} ${String.fromCodePoint(11088)} `;
   }
 
   const usersListBadgesList = templateUserTableRow.querySelector('.users-list__badges-list');

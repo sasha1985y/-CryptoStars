@@ -18,7 +18,7 @@ const createMapPopup = (cashContractor) => {
   userExchangeRate.textContent = `${cashContractor.exchangeRate} ₽`;
 
   const userCurrencyLimit = templatMapBaloon.querySelector('.limit');
-  userCurrencyLimit.textContent = `${cashContractor.minAmount} K - ${cashContractor.balance.amount} K `;
+  userCurrencyLimit.textContent = `${cashContractor.minAmount} ${String.fromCodePoint(11088)} - ${cashContractor.balance.amount} ${String.fromCodePoint(11088)} `;
 
   const card_1 = templatMapBaloon.querySelector('.first-card');
   const card_2 = templatMapBaloon.querySelector('.second-card');
@@ -41,5 +41,6 @@ const createMapPopup = (cashContractor) => {
 
   return templatMapBaloon;
 }
+
 
 export {createMapPopup, isEscapeKey};

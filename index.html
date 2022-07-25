@@ -132,7 +132,7 @@
                 <div class="user-profile">
                     <ul class="user-profile__cash">
                         <li class="user-profile__cash-item">
-                            <svg width="20" height="20" aria-hidden="true">
+                            <svg width="20" height="20" aria-hidden="true" id="kekscoin">
                                 <use xlink:href="#icon-kekscoin"></use>
                             </svg>
                             <span class="user-crypto-balance" id="user-crypto-balance">
@@ -365,10 +365,10 @@
                                 -->
                                 <select class="seller-options">
                                     <option class="choose" selected disabled>Выберите платёжную систему</option>
-                                    <option class="seller-option first-option">CryptoEx</option>
-                                    <option class="seller-option second-option">Первый криптобанк</option>
-                                    <option class="seller-option third-option">BitTransfer</option>
-                                    <!--option class="first-option">BMT Exchange</option-->
+                                    <option class="seller-option">CryptoEx</option>
+                                    <option class="seller-option">Первый криптобанк</option>
+                                    <option class="seller-option">BitTransfer</option>
+                                    <option class="seller-option">BMT Exchange</option>
                                 </select>
                             </div>
                         </div>
@@ -410,7 +410,7 @@
                         </p>
                     </div>
                 </form>
-                <button class="close-btn modal__close-btn" type="button" aria-label="Закрыть попап">
+                <button class="close-btn modal__close-btn buyer__close-btn" type="button" aria-label="Закрыть попап">
                     <svg width="8" height="8" aria-hidden="true">
                         <use xlink:href="#icon-close-small"></use>
                     </svg>
@@ -547,7 +547,7 @@
                         </p>
                     </div>
                 </form>
-                <button class="close-btn modal__close-btn" type="button" aria-label="Закрыть попап">
+                <button class="close-btn modal__close-btn seller__close-btn" type="button" aria-label="Закрыть попап">
                     <svg width="8" height="8" aria-hidden="true">
                         <use xlink:href="#icon-close-small"></use>
                     </svg>
